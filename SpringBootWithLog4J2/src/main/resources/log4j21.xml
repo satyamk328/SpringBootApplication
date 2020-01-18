@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<Configuration status="WARN" monitorInterval="60">
+	<Properties>
+		<Property name="patterns">[%d{HH:mm:ss.SSS} [%t] %-5level %logger{36}] -
+			%msg%n</Property>
+		<Property name="path">/logs</Property>
+		<Property name="archive">${filename}.%d{yyyy-MM}-%i.log</Property>
+	</Properties>
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT" follow="true">
+			<PatternLayout pattern="${patterns}" />
+		</Console>
+		<RollingFile name="File"
+			fileName="${path}/springboot_log.log"
+			filePattern="${path}/${archive}">
+			<PatternLayout>
+				<Pattern>${patterns}</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="100 MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20" />
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+		<!-- <Root level="ALL">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="File" />
+		</Root>
+		<Logger name="trace" level="TRACE">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="File" />
+		</Logger>
+		<Logger name="debug" level="DEBUG">
+			<AppenderRef ref="Console" />
+		</Logger>
+		<Logger name="info" level="INFO">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="File" />
+		</Logger>
+		<Logger name="warn" level="WARN">
+			<AppenderRef ref="Console" />
+		</Logger>
+		<Logger name="error" level="ERROR">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="File" />
+		</Logger>
+		<Logger name="fatal" level="FATAL">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="File" />
+		</Logger> -->
+		<Logger name="org.springframework.web" level="info"
+			additivity="false">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="File" />
+		</Logger>
+		<Logger name="com" level="info" additivity="false">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="File" />
+		</Logger>
+
+		<Root level="info">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="File" />
+		</Root>
+	</Loggers>
+</Configuration>

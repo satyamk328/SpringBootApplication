@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scanPeriod="5 seconds">
+	<include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+	
+	<springProperty scope="context" name="springAppName" source="spring.application.name"/>
+
+    <!-- You can override this to have a custom pattern -->
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%5.15t]){faint} %clr(%-10.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
+    
+	<contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator" />
+	
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+		      <pattern>[%d{yyyy-MM-dd HH:mm:ss}] [%thread] [${springAppName}, %X{X-B3-TraceId:-}, %X{X-B3-SpanId:-}, %X{X-Span-Export:-}] %-5level %logger{50}.%M - %msg%n</pattern>
+		</encoder> 
+	</appender>
+
+	<appender name="marketo-batch" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${catalina.base}/logs/marketo-batch.log</file>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<maxHistory>10</maxHistory>
+			<fileNamePattern>${catalina.base}/logs/marketo-batch-%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>20MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%X{X-B3-TraceId:-}] [%X{X-B3-SpanId:-}] %-5level %logger{50} - %msg%n</pattern>
+			<charset>utf8</charset>
+		</encoder>
+	</appender>
+
+	<logger name="com.mcmcg" level="INFO" additivity="false">
+	<appender-ref ref="STDOUT" />
+		<appender-ref ref="marketo-batch" />
+	</logger>
+
+	<logger name="org.apache" level="INFO" additivity="false">
+		<appender-ref ref="marketo-batch" />
+	</logger>
+
+	<logger name="net.sf.ehcache" level="INFO" additivity="false">
+	</logger>
+
+	<logger name="org.hibernate" level="INFO" additivity="false">
+		<appender-ref ref="marketo-batch" />
+	</logger>
+
+	<logger name="org.springframework" level="INFO"
+		additivity="false">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="marketo-batch" />
+	</logger>
+
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="marketo-batch" />
+	</root>
+
+</configuration>
